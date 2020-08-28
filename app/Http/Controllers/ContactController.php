@@ -7,14 +7,21 @@ use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+    private $limit = 5;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contacts = Contact::latest()->paginate(5);
+        if($group_id = $request->get('group_id'))
+        {
+            $contacts = Contact::where('group_id', $group_id)->paginate($this->limit);
+        }else{
+            $contacts = Contact::latest()->paginate($this->limit);
+        }
+        //dd($contacts);
         return view('contacts.index')->with('contacts', $contacts);
     }
 

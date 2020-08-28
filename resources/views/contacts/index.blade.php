@@ -31,7 +31,9 @@
         <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading c-list">
-                    <span class="title">Contacts</span>
+                    <span class="title">Contacts
+                        <span class="badge badge-pill badge-success">{{App\Contact::all()->count()}}</span>
+                    </span>
                     <ul class="pull-right c-controls">
                         <li><a href="#cant-do-all-the-work-for-you" data-toggle="tooltip" data-placement="top"
                                 title="Add Contact"><i class="glyphicon glyphicon-plus"></i></a></li>
@@ -69,23 +71,34 @@
                             <span class="visible-xs"> <span class="text-muted">{{$contact->phone}}</span><br /></span>
                             <span class="fa fa-comments text-muted c-info" data-toggle="tooltip"
                                 title="{{$contact->email}}"></span>
-                            <span class="visible-xs"> <span
-                                    class="text-muted">{{$contact->email}}</span><br /></span>
+                            <span class="visible-xs"> <span class="text-muted">{{$contact->email}}</span><br /></span>
                         </div>
                         <div class="clearfix"></div>
                     </li>
                     @endforeach
                 </ul>
-                
+
             </div>
-            {{$contacts->links()}}
+            {!! $contacts->appends( Request::query() )->render() !!}
         </div>
-        
+
         <div class="col-md-4">
             <ul class="list-group">
-                <li class="list-group-item active">Active item</li>
-                <li class="list-group-item">Second item</li>
-                <li class="list-group-item">Third item</li>
+                <?php $selected_group =  Request::get('group_id') ?>
+                <li class="list-group-item {{empty($selected_group) ? 'active' : ''}} ">
+                    <a href="{{route('contacts.index')}}" style="color: white;">All Groups
+                        <span class="badge badge-pill badge-success">{{App\Group::all()->count()}}</span>
+                    </a>
+                </li>
+                @foreach(App\Group::all() as $group)
+            <li class="list-group-item {{$selected_group == $group->id ? 'active' : ''}}">
+                    <a href="{{route('contacts.index', $group->id)}}">
+                        {{$group->name}}
+                        <span class="badge badge-pill badge-success">{{$group->contacts->count()}}</span>
+                    </a>
+
+                </li>
+                @endforeach
             </ul>
         </div>
     </div>
